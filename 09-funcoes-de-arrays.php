@@ -23,3 +23,5 @@ echo "<br/>";
 // Retorna um array com as chaves/indices do array passado
 
 print_r(array_keys($nomes));
+
+
