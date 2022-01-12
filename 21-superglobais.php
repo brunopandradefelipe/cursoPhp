@@ -9,3 +9,7 @@ function soma() {
     $result = $GLOBALS['a'] + $GLOBALS['b'] + $GLOBALS['c'];
     echo $result;
 }
+
+echo "<hr/>";
+
+print_r($_SERVER);
