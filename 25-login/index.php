@@ -23,6 +23,7 @@ if (isset($_POST['enviar'])) {
             // verificando o numero de linha de resultados, para ver se o usuario existe
             if (mysqli_num_rows($resultados) == 1){
                 $dados = mysqli_fetch_array($resultados);
+                mysqli_close($connect);
                 $_SESSION['logado'] = true;
                 $_SESSION['id_usuario'] = $dados['id'];
                 header('Location: dashbord.php');

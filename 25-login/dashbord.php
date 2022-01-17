@@ -13,7 +13,7 @@ if (!$_SESSION['logado'] == true) {
     $resultados = mysqli_query($connect, $sql);
     $dados = mysqli_fetch_array($resultados);
 }
-
+mysqli_close($connect);
 
 ?>
 
