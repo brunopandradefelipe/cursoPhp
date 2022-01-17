@@ -1,5 +1,43 @@
+<?php
+// Conexao com banco de dados!
+require_once './db_connect.php';
+
+session_start();
+
+if (isset($_POST['enviar'])) {
+    $erros = [];
+    // Armazenando os dados do POST
+    $usuario = mysqli_escape_string($connect, $_POST['usuario']);
+    $senha = mysqli_escape_string($connect, $_POST['senha']);
+
+    if (empty($usuario) || empty($senha)) {
+        $erros[] = "<li style='color:red'>O campo login/senha precisa ser preenchido!</li>";
+    } else {
+        $sql = "SELECT usuario FROM usuarios WHERE usuario = '$usuario'";
+        $resultados = mysqli_query($connect, $sql);
+        if(mysqli_num_rows($resultados) > 0){
+            $senha = md5($senha);
+            $sql = "SELECT * FROM usuarios WHERE usuario = '$usuario' AND senha = '$senha'";
+            // query envia o select  e armazena na variavel resultados
+            $resultados = mysqli_query($connect, $sql);
+            // verificando o numero de linha de resultados, para ver se o usuario existe
+            if (mysqli_num_rows($resultados) == 1){
+                $dados = mysqli_fetch_array($resultados);
+                $_SESSION['logado'] = true;
+                $_SESSION['id_usuario'] = $dados['id'];
+                header('Location: dashbord.php');
+            }else {
+                $erros[] = "<li style='color:red'>Senha incorreta!</li>";
+            }
+        } else {
+            $erros[] = "<li style='color:red'>Usuario inexistente!</li>";
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
@@ -12,10 +50,12 @@
             padding: 0px;
             font-family: sans-serif;
         }
+
         .block {
             display: block;
             margin-top: 20px;
         }
+
         label {
             display: block;
             text-align: left;
@@ -24,6 +64,7 @@
             font-size: 17px;
             color: rgba(0, 0, 0, 0.7);
         }
+
         .background {
             background-color: greenyellow;
             max-width: 400px;
@@ -36,6 +77,7 @@
             min-width: 200px;
             margin-top: 150px;
         }
+
         input {
             height: 40px;
             border-radius: 10px;
@@ -53,6 +95,7 @@
             font-size: 20px;
             cursor: pointer;
         }
+
         h1 {
             font-weight: bold !important;
             font-size: 30px;
@@ -63,18 +106,21 @@
             text-decoration: underline;
             font-size: clamp(1em, 1em + 1vw, 1.5em);
         }
-        
     </style>
 </head>
 
 <body>
+
     <div class="background">
         <h1>Login usuario</h1>
-        <form action="login">
-            <div class="block">
-                <label for="nome">Insira seu nome:</label>
-                <input type="text" placeholder="Insira seu nome" name="nome">
-            </div>
+        <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+            <?php
+            if (!empty($erros)) {
+                foreach ($erros as $erro) {
+                    echo $erro;
+                }
+            }
+            ?>
             <div class="block">
                 <label for="usuario">Insira seu usuario:</label>
                 <input type="text" placeholder="Insira seu usuario" name="usuario">
